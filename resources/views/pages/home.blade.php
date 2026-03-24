@@ -4,7 +4,7 @@
 
 {{-- ── Hero Section ──────────────────────────────────── --}}
 <section class="hero">
-    <div class="hero-glow"></div>
+    <div class="nebula" style="right: -100px; top: 0;"></div>
     <div class="hero-text">
         <p class="eyebrow">UI/UX Designer · Laravel Developer · Creative Designer</p>
         <h1>Hi, I'm <span class="name">Balasaravanan S</span></h1>
@@ -24,14 +24,12 @@
     </div>
 </section>
 
-{{-- ── Portfolio Section ─────────────────────────────── --}}
-<section class="portfolio">
+{{-- ── Portfolio Section (Arc) ────────────────────────── --}}
+<section class="portfolio" id="work">
     <p class="section-label">Selected Works</p>
     <h2>Featured Projects</h2>
-
     <div class="arc-section">
         <div class="arc-card">
-            <div class="arc-dot-grid"></div>
             <div class="arc-stage" id="arc-stage">
                 <canvas id="arc-cv"></canvas>
                 <div class="nodes-layer" id="nodes-layer"></div>
@@ -41,106 +39,83 @@
     </div>
 </section>
 
+{{-- ── Experience Section ────────────────────────────── --}}
+<section class="experience" id="experience">
+    <p class="section-label">Professional Experience</p>
+    <h2>Currently Building</h2>
+
+    <div class="exp-timeline">
+        <div class="exp-card active">
+            <div class="exp-glow"></div>
+            <div class="exp-header">
+                <div class="exp-title">
+                    <h3>Laravel Developer (ERP Specialist)</h3>
+                    <span class="company">TeraMed Technologies</span>
+                </div>
+                <div class="exp-date">March 2026 — Present</div>
+            </div>
+            <div class="exp-body">
+                <p>Leading the development of <strong>RMD ERP (CEASER)</strong>, a massive enterprise resource planning system using <strong>Laravel 12</strong> and <strong>PHP 8.2</strong>.</p>
+                <ul>
+                    <li>Architected complex modules: Inventory Management, Expense Claims, and Travel Requests.</li>
+                    <li>Implemented high-performance notification systems using <strong>Redis</strong> and <strong>MariaDB</strong>.</li>
+                    <li>Developed automated stock deduction (FEFO) and real-time inventory movement tracking.</li>
+                </ul>
+                <div class="badge-row">
+                    <span class="badge">Laravel 12</span>
+                    <span class="badge">PHP 8.2</span>
+                    <span class="badge">Redis</span>
+                    <span class="badge">MariaDB</span>
+                    <span class="badge">Vite</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <style>
-/* ── Full-Width Arc Layout ── */
-.arc-section { margin-bottom: 60px; width: 100%; }
-.arc-card {
-    background: radial-gradient(ellipse at 50% 0%, #0f2f1f 0%, #02060d 90%);
-    border-radius: 24px;
-    border: 1px solid rgba(34,197,94,0.1);
-    padding: 0 0 60px;
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-    width: 100%;
-}
-.arc-dot-grid {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(34,197,94,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-}
-.arc-stage {
-    position: relative;
-    width: 100%;
-    height: 400px; /* Taller for better arc presence */
-    cursor: grab;
-    display: flex;
-    justify-content: center;
-}
-.arc-stage:active { cursor: grabbing; }
+/* ── Hero Tweaks ── */
+.hero { display: flex; align-items: center; min-height: 90vh; }
+.hero-text { flex: 1; z-index: 2; }
+.hero-text h1 { font-size: 58px; font-weight: 900; line-height: 1.1; margin: 10px 0; }
+.hero-text .name { background: linear-gradient(90deg, var(--green-light), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-meta { display: flex; gap: 10px; margin: 20px 0; }
+.meta-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 13px; }
+.hero-image img { width: 450px; filter: drop-shadow(0 0 40px var(--green-glow)); }
+.btn-outline { border: 2px solid var(--green); padding: 10px 24px; border-radius: 30px; color: #fff; text-decoration: none; font-weight: 700; transition: 0.3s; }
+.btn-outline:hover { background: var(--green-dim); }
 
-#arc-cv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+/* ── Arc Arc Section Style ── */
+.arc-card { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(10px); border-radius: 24px; border: 1px solid var(--border); padding: 20px 0 60px; position: relative; overflow: hidden; }
+.arc-stage { position: relative; width: 100%; height: 400px; display: flex; justify-content: center; }
+#arc-cv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 .nodes-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.arc-node-bg { border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; transition: 0.4s; }
+.arc-node-wrap.active .arc-node-bg { background: #fff; box-shadow: 0 0 25px var(--green-light); border: 3px solid var(--green); }
+.arc-node-label { position: absolute; top: 110%; font-size: 11px; font-weight: 900; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
 
-/* ── Node/Icon Styling ── */
-.arc-node-wrap {
-    position: absolute;
-    display: flex; 
-    flex-direction: column; 
-    align-items: center;
-    justify-content: center;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    z-index: 20;
-    transition: opacity 0.4s ease, filter 0.3s ease;
+/* ── Experience Cards ── */
+.exp-timeline { display: flex; flex-direction: column; gap: 20px; }
+.exp-card { 
+    background: rgba(255,255,255,0.02); 
+    border: 1px solid var(--border); 
+    border-radius: 24px; 
+    padding: 40px; 
+    position: relative; 
+    overflow: hidden; 
+    transition: 0.4s;
 }
-
-.arc-node-bg {
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: #e5e7eb; /* Light gray base like your Figma Group 12 */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-    border: 2px solid transparent;
-}
-
-.arc-node-wrap.active .arc-node-bg {
-    background: #ffffff;
-    box-shadow: 0 0 0 6px rgba(34,197,94,0.3), 0 20px 50px rgba(0,0,0,0.8);
-    border-color: #22c55e;
-}
-
-.arc-node-label {
-    position: absolute;
-    top: 110%; 
-    font-size: 12px; 
-    font-weight: 900; 
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.2);
-    white-space: nowrap;
-    transition: all 0.3s ease;
-    pointer-events: none;
-}
-.arc-node-wrap.active .arc-node-label { 
-    color: #4ade80; 
-    transform: translateY(8px); 
-    opacity: 1;
-    text-shadow: 0 0 15px rgba(34,197,94,0.6);
-}
-
-/* ── Project Display ── */
-.arc-projects-area { padding: 0 5%; margin-top: 20px; }
-.arc-proj-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    animation: fadeInUp 0.7s ease-out;
-}
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.arc-proj-card {
-    border-radius: 20px; height: 200px;
-    background: #060d08; border: 1px solid rgba(34,197,94,0.1);
-    overflow: hidden; position: relative; transition: 0.3s;
-}
-.arc-proj-card:hover { transform: translateY(-8px); border-color: #22c55e; }
-.arc-proj-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
-
-@media (max-width: 800px) { .arc-proj-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 500px) { .arc-proj-grid { grid-template-columns: 1fr; } }
+.exp-card:hover { border-color: var(--green); transform: translateY(-5px); }
+.exp-glow { position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle, var(--green-dim), transparent 70%); opacity: 0.5; }
+.exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+.exp-title h3 { font-size: 24px; color: var(--green-light); }
+.exp-date { font-weight: 700; color: var(--text-muted); opacity: 0.8; }
+.exp-body p { margin-bottom: 15px; line-height: 1.6; color: var(--text-muted); }
+.exp-body ul { list-style: none; margin-bottom: 20px; }
+.exp-body li { position: relative; padding-left: 20px; margin-bottom: 10px; color: #cbd5e1; font-size: 15px; }
+.exp-body li::before { content: '→'; position: absolute; left: 0; color: var(--green); }
+.badge-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge { background: var(--green-dim); border: 1px solid rgba(34,197,94,0.2); color: var(--green-light); padding: 5px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; }
 </style>
 
 <script>
@@ -153,9 +128,8 @@
         {id:'figma', label:'Figma', icon:"{{ asset('icons/figma.png') }}", projects:[{img:"{{ asset('images/figma/image_1.png') }}"}, {img:"{{ asset('images/figma/image_1 2.png') }}"}, {img:"{{ asset('images/figma/image_3.png') }}"}]},
     ];
 
-    let activeIdx = 2; // Blender starting in middle
-    let rotation = 0; 
-    let targetRot = 0;
+    let activeIdx = 2; 
+    let rotation = 0; let targetRot = 0;
     let isDragging = false, startX = 0, lastX = 0;
 
     const stage = document.getElementById('arc-stage');
@@ -163,7 +137,7 @@
     const cv = document.getElementById('arc-cv');
 
     function animate() {
-        rotation += (targetRot - rotation) * 0.1; // Smooth interpolation
+        rotation += (targetRot - rotation) * 0.1;
         draw();
         requestAnimationFrame(animate);
     }
@@ -178,22 +152,17 @@
         layer.innerHTML = '';
 
         tools.forEach((t, i) => {
-            // Distribute across a wide arc
             const baseAngle = 220 + (i * (100 / (tools.length - 1)));
             const angle = (baseAngle + rotation) * (Math.PI / 180);
-
             const x = centerX + radius * Math.cos(angle);
             const y = centerY + radius * Math.sin(angle);
-
             const distFromApex = Math.abs((baseAngle + rotation) - 270);
             const scale = Math.max(0.4, 1.4 - (distFromApex / 65));
             const opacity = Math.max(0, 1.1 - (distFromApex / 60));
 
             const wrap = document.createElement('div');
             wrap.className = `arc-node-wrap ${distFromApex < 10 ? 'active' : ''}`;
-            wrap.style.left = `${x}px`; wrap.style.top = `${y}px`;
-            wrap.style.opacity = opacity;
-            wrap.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            wrap.style.cssText = `position:absolute; left:${x}px; top:${y}px; opacity:${opacity}; transform:translate(-50%, -50%) scale(${scale}); cursor:pointer; z-index:20;`;
 
             const bg = document.createElement('div');
             bg.className = 'arc-node-bg';
@@ -202,35 +171,17 @@
 
             wrap.appendChild(bg);
             wrap.appendChild(document.createRange().createContextualFragment(`<span class="arc-node-label">${t.label}</span>`));
-            
-            // Interaction: Click to snap to center
-            wrap.onclick = (e) => {
-                e.stopPropagation();
-                targetRot = 270 - baseAngle;
-                if(activeIdx !== i) { activeIdx = i; renderProjects(); }
-            };
-            
+            wrap.onclick = (e) => { targetRot = 270 - baseAngle; if(activeIdx !== i) { activeIdx = i; renderProjects(); } };
             layer.appendChild(wrap);
         });
-
-        // Background Arc Line
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 210 * Math.PI/180, 330 * Math.PI/180);
-        ctx.strokeStyle = 'rgba(34,197,94,0.15)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(centerX, centerY, radius, 210 * Math.PI/180, 330 * Math.PI/180);
+        ctx.strokeStyle = 'rgba(34,197,94,0.1)'; ctx.lineWidth = 2; ctx.stroke();
     }
 
-    // Drag / Swipe Logic
     const startDrag = (x) => { isDragging = true; startX = x; lastX = x; };
-    const moveDrag = (x) => {
-        if (!isDragging) return;
-        const delta = (x - lastX) * 0.3;
-        targetRot += delta;
-        lastX = x;
-    };
+    const moveDrag = (x) => { if (!isDragging) return; targetRot += (x - lastX) * 0.3; lastX = x; };
     const endDrag = () => {
-        if (!isDragging) return;
         isDragging = false;
-        // Snap to nearest
         const closest = tools.reduce((prev, curr, i) => {
             const baseAngle = 220 + (i * (100 / (tools.length - 1)));
             return Math.abs(270 - (baseAngle + targetRot)) < Math.abs(270 - (220 + (prev * (100 / (tools.length - 1))) + targetRot)) ? i : prev;
@@ -249,12 +200,13 @@
     function renderProjects() {
         const t = tools[activeIdx];
         document.getElementById('arc-proj-area').innerHTML = `
-            <div class="arc-proj-grid">${t.projects.map(p => `<div class="arc-proj-card"><img src="${p.img}"></div>`).join('')}</div>`;
+            <div class="arc-proj-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; animation:fadeInUp 0.6s;">
+                ${t.projects.map(p => `<div class="arc-proj-card" style="height:200px; border-radius:20px; overflow:hidden; border:1px solid var(--border);"><img src="${p.img}" style="width:100%; height:100%; object-fit:cover;"></div>`).join('')}
+            </div>`;
     }
 
     window.addEventListener('resize', draw);
-    animate();
-    renderProjects();
+    animate(); renderProjects();
 })();
 </script>
 @endsection
