@@ -4,13 +4,10 @@ namespace App\Filament\Widgets;
 
 use App\Models\AnalyticsEvent;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 
 class PageViewsChartWidget extends ChartWidget
 {
-    protected static ?string $heading = 'Page Views — Last 14 Days';
-    protected static ?int $sort = 3;
-    protected static string $color = 'info';
+    protected ?string $heading = 'Page Views — Last 14 Days';
 
     protected function getData(): array
     {
@@ -19,14 +16,12 @@ class PageViewsChartWidget extends ChartWidget
 
         $views = $days->map(
             fn ($d) => AnalyticsEvent::ofEvent('page_view')
-                ->whereDate('created_at', $d)
-                ->count()
+                ->whereDate('created_at', $d)->count()
         )->toArray();
 
         $downloads = $days->map(
             fn ($d) => AnalyticsEvent::ofEvent('cv_download')
-                ->whereDate('created_at', $d)
-                ->count()
+                ->whereDate('created_at', $d)->count()
         )->toArray();
 
         return [

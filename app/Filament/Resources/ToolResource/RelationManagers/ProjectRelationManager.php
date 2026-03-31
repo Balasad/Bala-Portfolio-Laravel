@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\ToolResource\RelationManagers;
 
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -15,30 +21,18 @@ class ProjectsRelationManager extends RelationManager
     public function form(Schema $form): Schema
     {
         return $form->schema([
-            Forms\Components\TextInput::make('title')
-                ->required()
-                ->maxLength(200),
-
-            Forms\Components\Textarea::make('description')
-                ->rows(3)
-                ->columnSpanFull(),
-
-            Forms\Components\TextInput::make('sort_order')
-                ->numeric()
-                ->default(0),
-
-            Forms\Components\Toggle::make('is_active')
-                ->default(true),
-
+            Forms\Components\TextInput::make('title')->required()->maxLength(200),
+            Forms\Components\Textarea::make('description')->rows(3)->columnSpanFull(),
+            Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
+            Forms\Components\Toggle::make('is_active')->default(true),
             Forms\Components\FileUpload::make('images')
-                ->collection('images')
                 ->multiple()
                 ->reorderable()
                 ->image()
                 ->imageEditor()
                 ->maxFiles(5)
                 ->columnSpanFull()
-                ->helperText('Upload up to 5 project images. Auto-converted to optimised WebP.'),
+                ->helperText('Upload up to 5 project images.'),
         ]);
     }
 
@@ -46,10 +40,6 @@ class ProjectsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('images')
-                    ->stacked()
-                    ->limit(3),
-
                 Tables\Columns\TextColumn::make('title')->searchable(),
                 Tables\Columns\TextColumn::make('sort_order')->label('Order')->sortable(),
                 Tables\Columns\ToggleColumn::make('is_active'),
@@ -58,20 +48,16 @@ class ProjectsRelationManager extends RelationManager
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
 }
-
-
-
-

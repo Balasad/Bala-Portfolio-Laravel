@@ -7,13 +7,10 @@ use Filament\Widgets\ChartWidget;
 
 class ToolClicksChartWidget extends ChartWidget
 {
-    protected static ?string $heading = 'Tool Clicks — Last 30 Days';
-    protected static ?int $sort = 2;
-    protected static string $color = 'success';
+    protected ?string $heading = 'Tool Clicks — Last 30 Days';
 
     protected function getData(): array
     {
-        /* Get click counts per tool for the last 30 days */
         $rows = AnalyticsEvent::ofEvent('tool_click')
             ->where('created_at', '>=', now()->subDays(30))
             ->selectRaw('payload as tool, COUNT(*) as clicks')
@@ -33,8 +30,8 @@ class ToolClicksChartWidget extends ChartWidget
                         'rgba(187, 247, 208, 0.8)',
                         'rgba(220, 252, 231, 0.8)',
                     ],
-                    'borderColor'     => 'rgba(34, 197, 94, 1)',
-                    'borderWidth'     => 1,
+                    'borderColor' => 'rgba(34, 197, 94, 1)',
+                    'borderWidth' => 1,
                 ],
             ],
             'labels' => $rows->pluck('tool')->toArray(),

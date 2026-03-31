@@ -4,6 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ToolResource\Pages;
 use App\Models\Tool;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -13,14 +18,13 @@ use Filament\Tables\Table;
 class ToolResource extends Resource
 {
     protected static ?string $model = Tool::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-wrench-screwdriver';
-    protected static string | \UnitEnum | null $navigationGroup = 'Portfolio';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static string|\UnitEnum|null $navigationGroup = 'Portfolio';
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $form): Schema
     {
-        return $form
-            ->schema([
+        return $form->schema([
             Forms\Components\Section::make('Tool Details')
                 ->columns(2)
                 ->schema([
@@ -31,29 +35,25 @@ class ToolResource extends Resource
                         ->afterStateUpdated(fn ($state, Forms\Set $set) =>
                             $set('slug', str($state)->slug())
                         ),
-
                     Forms\Components\TextInput::make('slug')
                         ->required()
                         ->unique(ignoreRecord: true)
                         ->maxLength(100),
-
                     Forms\Components\TextInput::make('sort_order')
                         ->numeric()
                         ->default(0)
                         ->helperText('Lower number = appears first in arc carousel'),
-
                     Forms\Components\Toggle::make('is_active')
                         ->default(true)
                         ->label('Show in carousel'),
                 ]),
-
             Forms\Components\Section::make('Tool Icon')
                 ->schema([
                     Forms\Components\FileUpload::make('icon')
                         ->image()
                         ->imageEditor()
                         ->acceptedFileTypes(['image/png', 'image/svg+xml', 'image/webp'])
-                        ->helperText('Upload the tool icon (PNG, SVG or WebP). Will be auto-converted to WebP.'),
+                        ->helperText('Upload the tool icon (PNG, SVG or WebP).'),
                 ]),
         ]);
     }
@@ -62,16 +62,12 @@ class ToolResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('icon')
-                    ->circular(),
-
+                Tables\Columns\ImageColumn::make('icon')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('slug')->color('gray'),
                 Tables\Columns\TextColumn::make('sort_order')->sortable()->label('Order'),
                 Tables\Columns\TextColumn::make('projects_count')
-                    ->counts('projects')
-                    ->label('Projects')
-                    ->badge(),
+                    ->counts('projects')->label('Projects')->badge(),
                 Tables\Columns\ToggleColumn::make('is_active')->label('Active'),
                 Tables\Columns\TextColumn::make('updated_at')->since()->sortable(),
             ])
@@ -81,12 +77,12 @@ class ToolResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_active')->label('Active'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -107,4 +103,3 @@ class ToolResource extends Resource
         ];
     }
 }
-

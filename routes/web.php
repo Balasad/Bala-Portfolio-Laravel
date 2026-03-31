@@ -7,18 +7,16 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Portfolio Routes
 |--------------------------------------------------------------------------
 */
 
-/* ── Home ── */
+// ── Home page — loads tools + experiences from DB
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-/* ── Portfolio ── */
-Route::get('/portfolio', fn () => view('pages.portfolio'))->name('portfolio');
-
-/* ── Contact (POST) ── */
+// ── Contact form — saves message to DB + sends email notification
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-/* ── Analytics (POST) ── */
-Route::post('/analytics/event', [AnalyticsController::class, 'store'])->name('analytics.event');
+// ── Analytics — called silently from frontend JS
+// Tracks: page_view, cv_download, tool_click, contact_sent
+Route::post('/analytics/event', [AnalyticsController::class, 'store'])->name('analytics.store');

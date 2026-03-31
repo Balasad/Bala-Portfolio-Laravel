@@ -4,6 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExperienceResource\Pages;
 use App\Models\Experience;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -13,8 +18,8 @@ use Filament\Tables\Table;
 class ExperienceResource extends Resource
 {
     protected static ?string $model = Experience::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-briefcase';
-    protected static string | \UnitEnum | null $navigationGroup = 'Portfolio';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-briefcase';
+    protected static string|\UnitEnum|null $navigationGroup = 'Portfolio';
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $form): Schema
@@ -24,51 +29,29 @@ class ExperienceResource extends Resource
                 ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('job_title')
-                        ->required()
-                        ->maxLength(200)
-                        ->columnSpanFull(),
-
+                        ->required()->maxLength(200)->columnSpanFull(),
                     Forms\Components\TextInput::make('company')
-                        ->required()
-                        ->maxLength(200),
-
+                        ->required()->maxLength(200),
                     Forms\Components\TextInput::make('period')
-                        ->required()
-                        ->maxLength(100)
-                        ->placeholder('March 2026 — Present'),
-
+                        ->required()->maxLength(100)->placeholder('March 2026 — Present'),
                     Forms\Components\Toggle::make('is_current')
-                        ->label('Currently working here')
-                        ->default(false),
-
+                        ->label('Currently working here')->default(false),
                     Forms\Components\TextInput::make('sort_order')
-                        ->numeric()
-                        ->default(0)
-                        ->helperText('Lower = appears first'),
-
-                    Forms\Components\Toggle::make('is_active')
-                        ->default(true),
+                        ->numeric()->default(0)->helperText('Lower = appears first'),
+                    Forms\Components\Toggle::make('is_active')->default(true),
                 ]),
-
             Forms\Components\Section::make('Description')
                 ->schema([
                     Forms\Components\Textarea::make('description')
-                        ->required()
-                        ->rows(4)
-                        ->columnSpanFull(),
-
+                        ->required()->rows(4)->columnSpanFull(),
                     Forms\Components\Repeater::make('highlights')
                         ->label('Bullet Points')
                         ->schema([
                             Forms\Components\TextInput::make('item')
-                                ->required()
-                                ->placeholder('Architected inventory management module...'),
+                                ->required()->placeholder('Architected inventory management module...'),
                         ])
                         ->addActionLabel('Add bullet point')
-                        ->reorderable()
-                        ->collapsible()
-                        ->columnSpanFull(),
-
+                        ->reorderable()->collapsible()->columnSpanFull(),
                     Forms\Components\TagsInput::make('badges')
                         ->label('Tech Badges')
                         ->placeholder('Add technology...')
@@ -85,9 +68,7 @@ class ExperienceResource extends Resource
                 Tables\Columns\TextColumn::make('job_title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('company')->searchable()->badge()->color('success'),
                 Tables\Columns\TextColumn::make('period')->color('gray'),
-                Tables\Columns\IconColumn::make('is_current')
-                    ->label('Current')
-                    ->boolean(),
+                Tables\Columns\IconColumn::make('is_current')->label('Current')->boolean(),
                 Tables\Columns\TextColumn::make('sort_order')->label('Order')->sortable(),
                 Tables\Columns\ToggleColumn::make('is_active')->label('Active'),
                 Tables\Columns\TextColumn::make('updated_at')->since()->sortable(),
@@ -95,12 +76,12 @@ class ExperienceResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -114,6 +95,3 @@ class ExperienceResource extends Resource
         ];
     }
 }
-
-
-

@@ -4,6 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ContactMessageResource\Pages;
 use App\Models\ContactMessage;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Infolists;
@@ -15,12 +21,11 @@ use Filament\Tables\Table;
 class ContactMessageResource extends Resource
 {
     protected static ?string $model = ContactMessage::class;
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-briefcase';
-    protected static string | \UnitEnum | null $navigationGroup = 'Inbox';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-envelope';
+    protected static string|\UnitEnum|null $navigationGroup = 'Inbox';
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationLabel = 'Messages';
 
-    /* Show unread count badge on nav item */
     public static function getNavigationBadge(): ?string
     {
         $count = ContactMessage::unread()->count();
@@ -32,7 +37,6 @@ class ContactMessageResource extends Resource
         return 'warning';
     }
 
-    /* Read-only form — editing messages not needed */
     public static function form(Schema $form): Schema
     {
         return $form->schema([
@@ -45,7 +49,6 @@ class ContactMessageResource extends Resource
         ]);
     }
 
-    /* Infolist for the View page — nicer read-only display */
     public static function infolist(Schema $infolist): Schema
     {
         return $infolist->schema([
@@ -57,19 +60,15 @@ class ContactMessageResource extends Resource
                         ->copyable()
                         ->url(fn ($record) => 'mailto:' . $record->email),
                     Infolists\Components\TextEntry::make('subject')
-                        ->columnSpanFull()
-                        ->placeholder('No subject'),
+                        ->columnSpanFull()->placeholder('No subject'),
                     Infolists\Components\TextEntry::make('message')
-                        ->columnSpanFull()
-                        ->prose(),
+                        ->columnSpanFull()->prose(),
                 ]),
-
             Infolists\Components\Section::make('Meta')
                 ->columns(3)
                 ->schema([
                     Infolists\Components\IconEntry::make('is_read')
-                        ->label('Status')
-                        ->boolean()
+                        ->label('Status')->boolean()
                         ->trueIcon('heroicon-o-envelope-open')
                         ->falseIcon('heroicon-o-envelope'),
                     Infolists\Components\TextEntry::make('ip_address')->label('IP'),
@@ -83,66 +82,43 @@ class ContactMessageResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\IconColumn::make('is_read')
-                    ->label('')
-                    ->boolean()
+                    ->label('')->boolean()
                     ->trueIcon('heroicon-o-envelope-open')
                     ->falseIcon('heroicon-o-envelope')
-                    ->trueColor('gray')
-                    ->falseColor('warning'),
-
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->weight(fn ($record) => $record->is_read ? null : 'bold'),
-
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->copyable(),
-
-                Tables\Columns\TextColumn::make('subject')
-                    ->limit(40)
-                    ->placeholder('No subject'),
-
-                Tables\Columns\TextColumn::make('message')
-                    ->limit(60)
-                    ->color('gray'),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->since()
-                    ->sortable()
-                    ->label('Received'),
+                    ->trueColor('gray')->falseColor('warning'),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('email')->searchable()->copyable(),
+                Tables\Columns\TextColumn::make('subject')->limit(40)->placeholder('No subject'),
+                Tables\Columns\TextColumn::make('message')->limit(60)->color('gray'),
+                Tables\Columns\TextColumn::make('created_at')->since()->sortable()->label('Received'),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_read')
                     ->label('Read status')
-                    ->trueLabel('Read')
-                    ->falseLabel('Unread'),
+                    ->trueLabel('Read')->falseLabel('Unread'),
             ])
             ->actions([
-                Tables\Actions\Action::make('mark_read')
+                Action::make('mark_read')
                     ->label('Mark read')
                     ->icon('heroicon-o-envelope-open')
                     ->color('success')
                     ->hidden(fn ($record) => $record->is_read)
                     ->action(function ($record) {
                         $record->markAsRead();
-                        Notification::make()
-                            ->title('Marked as read')
-                            ->success()
-                            ->send();
+                        Notification::make()->title('Marked as read')->success()->send();
                     }),
-
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ViewAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('mark_all_read')
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('mark_all_read')
                         ->label('Mark as read')
                         ->icon('heroicon-o-envelope-open')
                         ->action(fn ($records) => $records->each->markAsRead())
                         ->deselectRecordsAfterCompletion(),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
